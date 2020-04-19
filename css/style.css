@@ -1,0 +1,177 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:300,400,700&display=swap');
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    display: grid;
+    grid-template-columns: 64% 34%;
+    grid-column-gap: 2%;
+}
+
+.main-container {
+    display: grid;
+    justify-items: center;
+    /* margin: 2rem auto 0 auto; */
+    /* width: 50%; */
+    padding: 1rem;
+    box-shadow: 0 5px 17px rgba(129, 129, 129, 0.39);
+}
+
+#game-board-container {
+    display: grid;
+    grid-template-columns: 75px 75px 75px 75px 75px 75px 75px 75px 75px 75px;
+    grid-column-gap: 0px;
+    grid-template-rows: 75px 75px 75px 75px 75px 75px 75px 75px 75px 75px;
+    grid-row-gap: 0px;
+    border: 2px solid rgba(168, 168, 168, 0.411);
+}
+
+#game-board-container div {
+    padding: 2rem;
+    border: 2px solid rgba(168, 168, 168, 0.411);
+    /* box-shadow: 0 5px 17px rgba(154, 154, 154, 0.39); */
+
+}
+
+.side-container {
+    box-shadow: 0 5px 17px rgba(129, 129, 129, 0.39);
+    font-family: 'Open Sans', sans-serif;
+}
+
+.side-container h2 {
+    font-weight: 400;
+    font-size: 2rem;
+    text-align: center;
+}
+
+button {
+    outline: none;
+    cursor: pointer;
+    display: block;
+    border: none;
+    padding: 0.5rem 1rem 0.5rem 1rem;
+    border-radius: 50px;
+    font-size: 1.5rem;
+    font-weight: 300;
+    font-family: 'Open Sans', sans-serif;
+    color: #fff;
+    background-color: rgb(75, 196, 226);
+    border: 1px solid rgb(75, 196, 226);
+    margin: 1.3rem auto 0.3rem auto;
+    transition: all .3s ease-in-out;
+}
+
+button:hover {
+    color: rgb(75, 196, 226);
+    background-color: #fff;
+    /* border: 1px solid rgb(75, 196, 226); */
+}
+
+.player-one {
+    background-image: url('../img/player-one.png');
+    background-size: cover;
+}
+
+.player-two {
+    background-image: url('../img/player-two.png');
+    background-size: cover;
+}
+
+.obstacle {
+    background-image: url('../img/rock.png');
+    background-size: cover;
+    /* width: 70px;
+    height: 70px; */
+}
+
+.weapon-one {
+    background-image: url('../img/weapon-one.png');
+    background-size: cover;
+}
+
+.weapon-two {
+    background-image: url('../img/weapon-two.png'); 
+    background-size: cover;
+}
+
+.weapon-three {
+    background-image: url('../img/weapon-three.png'); 
+    background-size: cover;
+}
+
+.weapon-four {
+    background-image: url('../img/weapon-four.png'); 
+    background-size: cover;   
+}
+
+.border-blue {
+    border: 2px solid rgb(0, 174, 255) !important;
+}
+
+.border-red {
+    border: 2px solid rgb(255, 0, 34) !important;
+}
+
+
+ 
+.combat-container-player-one, 
+.combat-container-player-two,
+.combat-container-player-one h3,
+.combat-container-player-two h3 {
+    outline: solid 1px rgb(199, 199, 199);
+    padding: 1rem;
+}
+
+.combat-container {
+    display: grid;
+    grid-template-columns: 49% 49%;
+    grid-column-gap: 2%;
+    padding: 1rem;
+}
+
+.player-one-attack-button, 
+.player-two-attack-button,
+.player-one-defend-button,
+.player-two-defend-button {
+    display: inline-block;
+    margin-right: 1rem;
+}
+
+.message-container {
+    margin: 0 1rem 0 1rem;
+    outline: solid 1px rgb(199, 199, 199);
+    padding: 1rem;
+}
+
+.disabled {
+    pointer-events: none;
+
+    /* for "disabled" effect */
+    opacity: 0.5;
+    background: #CCC;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

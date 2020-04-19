@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="css/style.css">
+    <title>Document</title>
+</head>
+<body>
+<div class="main-container">
+    <div id="game-board-container">
+        
+    </div>
+    <button id="new-game">New Game</button>   
+</div>
+<div class="side-container">
+    <h2>Combat Window</h2>
+
+    <div class="combat-container">
+        <div class="combat-container-player-one">
+            <h3>Player 1 - <span class="player-one-name"></span></h3>
+            <h4>Hitpoints: <span class="player-one-hitpoints"></span></h4>
+            <h4>Weapon Equiped: <span class="player-one-weapon"></span></h4>
+            <h4>Total Damage: <span class="player-one-damage"></span></h4>
+            <button class="player-one-attack-button">Attack</button>
+            <button class="player-one-defend-button">Defend</button>
+        </div>
+        <div class="combat-container-player-two">
+            <h3>Player 2 - <span class="player-two-name"></span></h3>
+            <h4>Hitpoints: <span class="player-two-hitpoints"></span></h4>
+            <h4>Weapon Equiped: <span class="player-two-weapon"></span></h4>
+            <h4>Total Damage: <span class="player-two-damage"></span></h4>
+            <button class="player-two-attack-button">Attack</button>
+            <button class="player-two-defend-button">Defend</button>
+        </div>
+    </div>
+    <div class="message-container ">
+        <h2>Combat log will be here</h2>
+    </div>
+
+
+</div>
+    
+    <script src="js/script.js"></script>
+</body>
+</html>
