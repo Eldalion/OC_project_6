@@ -13,8 +13,6 @@ body {
 .main-container {
     display: grid;
     justify-items: center;
-    /* margin: 2rem auto 0 auto; */
-    /* width: 50%; */
     padding: 1rem;
     box-shadow: 0 5px 17px rgba(129, 129, 129, 0.39);
 }
@@ -31,8 +29,6 @@ body {
 #game-board-container div {
     padding: 2rem;
     border: 2px solid rgba(168, 168, 168, 0.411);
-    /* box-shadow: 0 5px 17px rgba(154, 154, 154, 0.39); */
-
 }
 
 .side-container {
@@ -66,7 +62,6 @@ button {
 button:hover {
     color: rgb(75, 196, 226);
     background-color: #fff;
-    /* border: 1px solid rgb(75, 196, 226); */
 }
 
 .player-one {
@@ -82,8 +77,6 @@ button:hover {
 .obstacle {
     background-image: url('../img/rock.png');
     background-size: cover;
-    /* width: 70px;
-    height: 70px; */
 }
 
 .weapon-one {
@@ -114,8 +107,6 @@ button:hover {
     border: 2px solid rgb(255, 0, 34) !important;
 }
 
-
- 
 .combat-container-player-one, 
 .combat-container-player-two,
 .combat-container-player-one h3,

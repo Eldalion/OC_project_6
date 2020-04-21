@@ -1,5 +1,29 @@
+
+/* 
+
+------- TO DO -------
+
+1. Mame 2 indikatory na playerturn. playerOneTurn a playerOne.turn = true; Vyjebat premennu a vsade dat len objekt
+2. Prerobit debilne pole co generuje eventlistenery pre oboch hracov zvlast. Spravit 1 eventlistener robustny pre oboch hracov
+3. Combat feature urobit. 
+    - Player 1 okno active, Player2 okno disabled, Combat log cisty
+    -
+    - Player1 vyberie akciu, player1 okno disabled, player2 okno enabled
+    - Player2 vyberie akciu, player2 okno disabled, player1 okno enabled
+    - Combat log message - ak niekoho HP je na 0, vypis vytaza, inac vypis kdo komu kolko zajebal a aku akciu si zvolil
+
+*/
+
+
 const button = document.querySelector('#new-game');
 const gameBoardContainer = document.querySelector('#game-board-container');
+const combatContainer = document.querySelector('.combat-container'); 
+const combatContainerPlayerOne = document.querySelector('.combat-container-player-one');
+const combatContainerPlayerTwo = document.querySelector('.combat-container-player-two');
+const messageContainer = document.querySelector('.message-container');
+
+
+
 
 const playerOneHitpoints = document.querySelector('.player-one-hitpoints');
 const playerOneWeapon = document.querySelector('.player-one-weapon');
@@ -15,28 +39,44 @@ const playerTwoDamage = document.querySelector('.player-two-damage');
 const playerTwoAttackButton = document.querySelector('.player-two-attack-button');
 const playerTwoDefendbButton = document.querySelector('.player-two-defend-button');
 
-/* Code for testing - remove on finished project */
-let mainCounter = 0;
-let classBugCounter = 0;
-/* Code for testing - remove on finished project */
+const playerOneName = document.querySelector('.player-one-name');
+const playerTwoName = document.querySelector('.player-two-name');
 
 let playerOneTurn = true;
 let playerTwoTurn = false;
+
+class Player {
+    constructor(name, health, attackPower, turn, action) {
+        this.name = name;
+        this.health = health;
+        this.attackPower = attackPower;
+        this.action = action;
+        this.turn = turn;
+    }
+}
+
+let playerOne = new Player('Frank', 100, 10, '', true);
+let playerTwo = new Player('Sahib', 100, 10, '', false);
+
+let game = {
+    movementPhase: true,
+    combatPhase: false
+}
+
+
+
+/* -------------------------------------------------------------------------------------------------------------------------------------- */
 
 button.addEventListener('click', function () {
     newGame();
 });
 
-class Player {
-    constructor(name, health, baseDamage, turn) {
-        this.name = name;
-        this.health = health;
-        this.baseDamage = baseDamage;
-        this.turn = turn;
-    }
-}
 /* -------------------------------------------------------------------------------------------------------------------------------------- */
 function generateBoard() {
+
+
+    combatContainer.classList.add('disabled');
+
     gameBoardContainer.innerHTML = ''; // Clear game tiles
     resetPlayerStats(); // Reset player stats to default
 
@@ -60,23 +100,16 @@ function addPlayersToBoard() {
 
     randomNumber = Math.floor(Math.random() * 100);
     divs[randomNumber].classList.add('player-one');
-    /* Code for testing - remove on finished project */
-    console.log('Player 1 - ', randomNumber);
-    /* Code for testing - remove on finished project */
+
     while (true) {
 
         randomNumber = Math.floor(Math.random() * 100)
 
         if (divs[randomNumber].classList.length == 0) {
             divs[randomNumber].classList.add('player-two');
-            console.log('Player 2 - ', randomNumber);
             break;
         }
-        /* Code for testing - remove on finished project */
-        console.log('Tile occupied - Skipping adding player two ');
-        /* Code for testing - remove on finished project */
     }
-
 }
 /* -------------------------------------------------------------------------------------------------------------------------------------- */
 
@@ -84,20 +117,14 @@ function addWeaponsToBoard() {
     let divs = document.querySelectorAll("#game-board-container div");
     let randomNumber = Math.floor(Math.random() * 100);
 
-
-
     while (true) {
 
         randomNumber = Math.floor(Math.random() * 100)
 
         if (divs[randomNumber].classList.length == 0) {
             divs[randomNumber].classList.add('weapon-one');
-            console.log('Pistol - ', randomNumber);
             break;
         }
-        /* Code for testing - remove on finished project */
-        console.log('Tile occupied - Skipping adding weapon one ');
-        /* Code for testing - remove on finished project */
     }
 
     while (true) {
@@ -106,14 +133,9 @@ function addWeaponsToBoard() {
 
         if (divs[randomNumber].classList.length == 0) {
             divs[randomNumber].classList.add('weapon-two');
-            /* Code for testing - remove on finished project */
-            console.log('Mace - ', randomNumber);
-            /* Code for testing - remove on finished project */
+
             break;
         }
-        /* Code for testing - remove on finished project */
-        console.log('Tile occupied - Skipping adding weapon two');
-        /* Code for testing - remove on finished project */
     }
 
     while (true) {
@@ -122,14 +144,9 @@ function addWeaponsToBoard() {
 
         if (divs[randomNumber].classList.length == 0) {
             divs[randomNumber].classList.add('weapon-three');
-            /* Code for testing - remove on finished project */
-            console.log('Rocket launcher - ', randomNumber);
-            /* Code for testing - remove on finished project */
+
             break;
         }
-        /* Code for testing - remove on finished project */
-        console.log('Tile occupied - Skipping adding weapon three');
-        /* Code for testing - remove on finished project */
     }
 
     while (true) {
@@ -138,14 +155,9 @@ function addWeaponsToBoard() {
 
         if (divs[randomNumber].classList.length == 0) {
             divs[randomNumber].classList.add('weapon-four');
-            /* Code for testing - remove on finished project */
-            console.log('Police baton - ', randomNumber);
-            /* Code for testing - remove on finished project */
+
             break;
         }
-        /* Code for testing - remove on finished project */
-        console.log('Tile occupied - Skipping adding weapon four');
-        /* Code for testing - remove on finished project */
     }
 }
 /* -------------------------------------------------------------------------------------------------------------------------------------- */
@@ -177,45 +189,32 @@ function addObstaclesToBoard() {
 }
 /* -------------------------------------------------------------------------------------------------------------------------------------- */
 function resetPlayerStats() {
-    playerOne = new Player('Frank', 100, 10, true);
-    playerTwo = new Player('Sahib', 100, 10, false);
 
-    const playerOneName = document.querySelector('.player-one-name');
-    const playerTwoName = document.querySelector('.player-two-name');
+    playerOne.health = 100;
+    playerOne.attackPower = 10;
+    playerOne.turn = true;
 
+    playerOne.health = 100;
+    playerOne.attackPower = 10;
+    playerOne.turn = false;
+    
     playerOneName.innerHTML = playerOne.name;
     playerOneHitpoints.innerHTML = playerOne.health;
     playerOneWeapon.innerHTML = "No weapon";
-    playerOneDamage.innerHTML = playerOne.baseDamage;
+    playerOneDamage.innerHTML = playerOne.attackPower;
 
     playerTwoName.innerHTML = playerTwo.name;
     playerTwoHitpoints.innerHTML = playerTwo.health;
     playerTwoWeapon.innerHTML = "No weapon";
-    playerTwoDamage.innerHTML = playerTwo.baseDamage;
+    playerTwoDamage.innerHTML = playerTwo.attackPower;
 }
 /* -------------------------------------------------------------------------------------------------------------------------------------- */
 function newGame() {
-    console.clear();
     generateBoard();
     addPlayersToBoard();
     addWeaponsToBoard();
     addObstaclesToBoard();
     playerMovement();
-    /* ------------------------------------- Testing One --------------------------------------------- */
-    mainCounter = mainCounter + 1;
-
-    let divs = document.querySelectorAll("#game-board-container div");
-    for (var i = 0; i < divs.length; i++) {
-        if (divs[i].classList.length > 1) {
-            classBugCounter = classBugCounter + 1;
-        }
-    }
-    /* Code for testing - remove on finished project */
-    console.log('----------------------------------------------------------');
-    console.log('Test number', mainCounter);
-    console.log('Class bug counter', classBugCounter);
-    /* Code for testing - remove on finished project */
-
 }
 /* -------------------------------------------------------------------------------------------------------------------------------------- */
 
@@ -231,7 +230,7 @@ function playerOneMove() {
     playerOnePosition.classList.add('border-blue'); // Give player one blue border for visibility
 
     for (let i = 0; i < divs.length; i++) {
-        divs[i].addEventListener('click', function P1M (event) { // Add events to all game tiles
+        divs[i].addEventListener('click', function P1M(event) { // Add events to all game tiles
 
             if ((event.target.classList.length == 0) && (playerOneTurn == true)) { // If clicked tile is empty ( no class ) and its Player's one turn
                 playerOnePosition.classList.remove('border-blue');
@@ -253,7 +252,7 @@ function playerOneMove() {
                 )
 
                 {
-                    startCombat();
+                    switchToCombat();
                 } else {
                     playerTwoMove();
                 }
@@ -268,7 +267,7 @@ function playerTwoMove() {
     playerTwoPosition.classList.add('border-red');
 
     for (let i = 0; i < divs.length; i++) {
-        divs[i].addEventListener('click', function P2M (event) {
+        divs[i].addEventListener('click', function P2M(event) {
 
             if ((event.target.classList.length == 0) && (playerTwoTurn == true)) { // If clicked tile is empty, move player there
                 playerTwoPosition.classList.remove('border-red');
@@ -289,7 +288,7 @@ function playerTwoMove() {
                 )
 
                 {
-                    startCombat();
+                    switchToCombat();
                 } else {
                     playerOneMove();
                 }
@@ -298,10 +297,124 @@ function playerTwoMove() {
     }
 }
 
-function startCombat() {
+
+
+
+function switchToCombat() { // Nastav vsetky starter veci, ako zakryt player 2 okno
     alert('Combat !!!');
 
+    combatContainer.classList.toggle('disabled');
+    combatContainerPlayerTwo.classList.toggle('disabled');
+}
+
+function switchPlayer (){
+    combatContainerPlayerOne.classList.toggle('disabled');
+    combatContainerPlayerTwo.classList.toggle('disabled');
+}
+
+
+playerOneAttackButton.addEventListener('click', () => {
+
+    playerOne.action = 'Attack';
+    switchPlayer();
+});
+
+playerOneDefendbButton.addEventListener('click', () => {
+    playerOne.action = 'Defend';
+    switchPlayer();
+    
+});
+
+playerTwoAttackButton.addEventListener('click', () => {
+
+    playerTwo.action = 'Attack';
+
+    resolveCombat();
+    switchPlayer();
+
+});
+
+playerTwoDefendbButton.addEventListener('click', () => {
+    
+    playerTwo.action = 'Defend';
+
+    resolveCombat();
+    switchPlayer();
+});
+
+function resolveCombat() { 
+
+    if (playerOne.action == 'Attack' && playerTwo.action == 'Attack')  {
+        playerOne.health = playerOne.health - playerTwo.attackPower;
+        playerTwo.health = playerTwo.health - playerOne.attackPower;
+
+        playerOneHitpoints.innerHTML = playerOne.health;
+        playerTwoHitpoints.innerHTML = playerTwo.health;
+
+        if ( playerOne.health <= 0 || playerTwo.health <= 0) {
+            messageContainer.innerHTML = 'Someone died - new game ?';
+        } else {
+            messageContainer.innerHTML = 'Both player attacked - New round';
+        }
+
+    }
+
+    if (playerOne.action == 'Defend' && playerTwo.action == 'Defend')  {
+        
+        messageContainer.innerHTML = 'Both player defended, no change in HP - New round';
+    }
+
+    if (playerOne.action == 'Attack' && playerTwo.action == 'Defend')  {
+        
+        playerTwo.health = playerTwo.health - (playerOne.attackPower / 2 );
+        playerTwoHitpoints.innerHTML = playerTwo.health;
+
+        if ( playerOne.health <= 0 || playerTwo.health <= 0) {
+            messageContainer.innerHTML = 'Someone died - new game ?';
+        } else {
+            messageContainer.innerHTML = 'Frank attacked, Sahib defended - New round';
+        }
+    }
+
+    if (playerOne.action == 'Defend' && playerTwo.action == 'Attack')  {
+
+        playerOne.health = playerOne.health - (playerTwo.attackPower / 2 );
+        playerOneHitpoints.innerHTML = playerOne.health;
+
+        if ( playerOne.health <= 0 || playerTwo.health <= 0) {
+            messageContainer.innerHTML = 'Someone died - new game ?';
+        } else {
+            messageContainer.innerHTML = 'Frank defended, Sahib attacked - New round';
+        }
+        
+    }
+}
+
+
+    /* 3. Combat feature urobit. 
+    - Player 1 okno active, Player2 okno disabled, Combat log cisty
+    -
+    - Player1 vyberie akciu, player1 okno disabled, player2 okno enabled
+    - Player2 vyberie akciu, player2 okno disabled, player1 okno enabled
+    - Combat log message - ak niekoho HP je na 0, vypis vytaza, inac vypis kdo komu kolko zajebal a aku akciu si zvolil 
+    */
+
+
     /* ---- this block is just for reference, wont be in final code
+
+    const playerOneHitpoints = document.querySelector('.player-one-hitpoints');
+const playerOneWeapon = document.querySelector('.player-one-weapon');
+const playerOneDamage = document.querySelector('.player-one-damage');
+
+const playerOneAttackButton = document.querySelector('.player-one-attack-button');
+const playerOneDefendbButton = document.querySelector('.player-one-defend-button');
+
+
+
+
+
+
+
     playerOneName.innerHTML = playerOne.name;
     playerOneHitpoints.innerHTML = playerOne.health;
     playerOneWeapon.innerHTML = "No weapon";
@@ -327,8 +440,7 @@ function startCombat() {
     const playerTwoDefendbButton = document.querySelector('.player-two-defend-button');
     */
 
-   
-   
+
 
     /* 
     
@@ -392,14 +504,8 @@ function startCombat() {
                 }
             }    
         }
-
-                
-    
     */
 
-     
-
-}
 
 
 
@@ -426,21 +532,3 @@ function startCombat() {
 2. Very rarely, player can spawn in the corner surounded by rocks. Its very very rare tho. Didnt happen once in last 100 tests. 
 
 */
-
-
-/* let row = Number(event.target.dataset.row);
-let column = Number(event.target.dataset.column);
-console.log('Riadok: ', row,", Stlpec: ", column);
-document.querySelector("[data-row='"+ String(row)  +"'][data-column='"+ String(column+1) +"']").classList.add('border-blue');
-document.querySelector("[data-row='"+ String(row)  +"'][data-column='"+ String(column+2) +"']").classList.add('border-blue');
-document.querySelector("[data-row='"+ String(row)  +"'][data-column='"+ String(column+3) +"']").classList.add('border-blue');
-document.querySelector("[data-row='"+ String(row)  +"'][data-column='"+ String(column-1) +"']").classList.add('border-blue');
-document.querySelector("[data-row='"+ String(row)  +"'][data-column='"+ String(column-2) +"']").classList.add('border-blue');
-document.querySelector("[data-row='"+ String(row)  +"'][data-column='"+ String(column-3) +"']").classList.add('border-blue');
-
-document.querySelector("[data-row='"+ String(row+1)  +"'][data-column='"+ String(column) +"']").classList.add('border-blue');
-document.querySelector("[data-row='"+ String(row+2)  +"'][data-column='"+ String(column) +"']").classList.add('border-blue');
-document.querySelector("[data-row='"+ String(row+3)  +"'][data-column='"+ String(column) +"']").classList.add('border-blue');
-document.querySelector("[data-row='"+ String(row-1)  +"'][data-column='"+ String(column) +"']").classList.add('border-blue');
-document.querySelector("[data-row='"+ String(row-2)  +"'][data-column='"+ String(column) +"']").classList.add('border-blue');
-document.querySelector("[data-row='"+ String(row-3)  +"'][data-column='"+ String(column) +"']").classList.add('border-blue'); */
