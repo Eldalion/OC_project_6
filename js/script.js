@@ -15,7 +15,7 @@
 */
 
 
-const button = document.querySelector('#new-game');
+const newGameButton = document.querySelector('#new-game');
 const gameBoardContainer = document.querySelector('#game-board-container');
 const combatContainer = document.querySelector('.combat-container'); 
 const combatContainerPlayerOne = document.querySelector('.combat-container-player-one');
@@ -58,23 +58,10 @@ class Player {
 let playerOne = new Player('Frank', 100, 10, '', true);
 let playerTwo = new Player('Sahib', 100, 10, '', false);
 
-let game = {
-    movementPhase: true,
-    combatPhase: false
-}
-
-
-
-/* -------------------------------------------------------------------------------------------------------------------------------------- */
-
-button.addEventListener('click', function () {
-    newGame();
-});
 
 /* -------------------------------------------------------------------------------------------------------------------------------------- */
 function generateBoard() {
-
-
+    gameBoardContainer.classList.remove('disabled');
     combatContainer.classList.add('disabled');
 
     gameBoardContainer.innerHTML = ''; // Clear game tiles
@@ -297,11 +284,11 @@ function playerTwoMove() {
     }
 }
 
+/* -------------------------------------------------------------------------------------------------------------------------------------- */
 
-
-
-function switchToCombat() { // Nastav vsetky starter veci, ako zakryt player 2 okno
-    alert('Combat !!!');
+function switchToCombat() { 
+    alert('Combat initiated !');
+    gameBoardContainer.classList.toggle('disabled');
 
     combatContainer.classList.toggle('disabled');
     combatContainerPlayerTwo.classList.toggle('disabled');
@@ -312,6 +299,56 @@ function switchPlayer (){
     combatContainerPlayerTwo.classList.toggle('disabled');
 }
 
+function resolveCombat() { 
+
+    if (playerOne.action == 'Attack' && playerTwo.action == 'Attack')  {
+        playerOne.health = playerOne.health - playerTwo.attackPower;
+        playerTwo.health = playerTwo.health - playerOne.attackPower;
+        playerOneHitpoints.innerHTML = playerOne.health;
+        playerTwoHitpoints.innerHTML = playerTwo.health;
+
+        if ( playerOne.health <= 0 || playerTwo.health <= 0) {
+            messageContainer.innerHTML = 'Someone died - new game ?';
+            
+        } else {
+            messageContainer.innerHTML = 'Both player attacked - New round';
+        }
+    }
+
+    if (playerOne.action == 'Defend' && playerTwo.action == 'Defend')  {
+        messageContainer.innerHTML = 'Both player defended, no change in HP - New round';
+    }
+
+    if (playerOne.action == 'Attack' && playerTwo.action == 'Defend')  {
+        playerTwo.health = playerTwo.health - (playerOne.attackPower / 2 );
+        playerTwoHitpoints.innerHTML = playerTwo.health;
+
+        if ( playerOne.health <= 0 || playerTwo.health <= 0) {
+            messageContainer.innerHTML = 'Someone died - new game ?';
+            
+        } else {
+            messageContainer.innerHTML = 'Frank attacked, Sahib defended - New round';
+        }
+    }
+
+    if (playerOne.action == 'Defend' && playerTwo.action == 'Attack')  {
+        playerOne.health = playerOne.health - (playerTwo.attackPower / 2 );
+        playerOneHitpoints.innerHTML = playerOne.health;
+
+        if ( playerOne.health <= 0 || playerTwo.health <= 0) {
+            messageContainer.innerHTML = 'Someone died - new game ?';
+            
+        } else {
+            messageContainer.innerHTML = 'Frank defended, Sahib attacked - New round';
+        }
+    }
+}
+
+/* -------------------------------------------------------------------------------------------------------------------------------------- */
+
+newGameButton.addEventListener('click', function () {
+    newGame();
+});
 
 playerOneAttackButton.addEventListener('click', () => {
 
@@ -341,51 +378,3 @@ playerTwoDefendbButton.addEventListener('click', () => {
     resolveCombat();
     switchPlayer();
 });
-
-function resolveCombat() { 
-
-    if (playerOne.action == 'Attack' && playerTwo.action == 'Attack')  {
-        playerOne.health = playerOne.health - playerTwo.attackPower;
-        playerTwo.health = playerTwo.health - playerOne.attackPower;
-
-        playerOneHitpoints.innerHTML = playerOne.health;
-        playerTwoHitpoints.innerHTML = playerTwo.health;
-
-        if ( playerOne.health <= 0 || playerTwo.health <= 0) {
-            messageContainer.innerHTML = 'Someone died - new game ?';
-        } else {
-            messageContainer.innerHTML = 'Both player attacked - New round';
-        }
-
-    }
-
-    if (playerOne.action == 'Defend' && playerTwo.action == 'Defend')  {
-        
-        messageContainer.innerHTML = 'Both player defended, no change in HP - New round';
-    }
-
-    if (playerOne.action == 'Attack' && playerTwo.action == 'Defend')  {
-        
-        playerTwo.health = playerTwo.health - (playerOne.attackPower / 2 );
-        playerTwoHitpoints.innerHTML = playerTwo.health;
-
-        if ( playerOne.health <= 0 || playerTwo.health <= 0) {
-            messageContainer.innerHTML = 'Someone died - new game ?';
-        } else {
-            messageContainer.innerHTML = 'Frank attacked, Sahib defended - New round';
-        }
-    }
-
-    if (playerOne.action == 'Defend' && playerTwo.action == 'Attack')  {
-
-        playerOne.health = playerOne.health - (playerTwo.attackPower / 2 );
-        playerOneHitpoints.innerHTML = playerOne.health;
-
-        if ( playerOne.health <= 0 || playerTwo.health <= 0) {
-            messageContainer.innerHTML = 'Someone died - new game ?';
-        } else {
-            messageContainer.innerHTML = 'Frank defended, Sahib attacked - New round';
-        }
-        
-    }
-}
