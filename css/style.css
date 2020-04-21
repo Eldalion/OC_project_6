@@ -136,6 +136,10 @@ button:hover {
     padding: 1rem;
 }
 
+.message-container h2 {
+    font-size: 1.6rem;
+}
+
 .disabled {
     pointer-events: none;
 

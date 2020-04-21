@@ -20,7 +20,7 @@ const gameBoardContainer = document.querySelector('#game-board-container');
 const combatContainer = document.querySelector('.combat-container'); 
 const combatContainerPlayerOne = document.querySelector('.combat-container-player-one');
 const combatContainerPlayerTwo = document.querySelector('.combat-container-player-two');
-const messageContainer = document.querySelector('.message-container');
+const messageContainer = document.querySelector('.message-container h2');
 
 
 
@@ -194,6 +194,8 @@ function resetPlayerStats() {
     playerTwoHitpoints.innerHTML = playerTwo.health;
     playerTwoWeapon.innerHTML = "No weapon";
     playerTwoDamage.innerHTML = playerTwo.attackPower;
+
+    messageContainer.innerHTML = 'Players are not in combat';
 }
 /* -------------------------------------------------------------------------------------------------------------------------------------- */
 function newGame() {
