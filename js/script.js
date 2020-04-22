@@ -1,6 +1,4 @@
-/* 
-
-------- TO DO -------
+/* ------- TO DO -------
 
 1. Mame 2 indikatory na playerturn. playerOneTurn a playerOne.turn = true; Vyjebat premennu a vsade dat len objekt
 2. Prerobit debilne pole co generuje eventlistenery pre oboch hracov zvlast. Spravit 1 eventlistener robustny pre oboch hracov
@@ -13,16 +11,12 @@
 4. Very rarely, player can spawn in the corner surounded by rocks. Its very very rare tho. Didnt happen once in last 100 tests.
 */
 
-
 const newGameButton = document.querySelector('#new-game');
 const gameBoardContainer = document.querySelector('#game-board-container');
 const combatContainer = document.querySelector('.combat-container');
 const combatContainerPlayerOne = document.querySelector('.combat-container-player-one');
 const combatContainerPlayerTwo = document.querySelector('.combat-container-player-two');
 const messageContainer = document.querySelector('.message-container h2');
-
-
-
 
 const playerOneHitpoints = document.querySelector('.player-one-hitpoints');
 const playerOneWeapon = document.querySelector('.player-one-weapon');
@@ -41,9 +35,6 @@ const playerTwoDefendbButton = document.querySelector('.player-two-defend-button
 const playerOneName = document.querySelector('.player-one-name');
 const playerTwoName = document.querySelector('.player-two-name');
 
-let playerOneTurn = true;
-let playerTwoTurn = false;
-
 class Player {
     constructor(name, health, attackPower, turn, action) {
         this.name = name;
@@ -56,8 +47,6 @@ class Player {
 
 let playerOne = new Player('Frank', 100, 10, '', true);
 let playerTwo = new Player('Sahib', 100, 10, '', false);
-
-
 
 /* -------------------------------------------------------------------------------------------------------------------------------------- */
 function generateBoard() {
@@ -207,42 +196,69 @@ function newGame() {
 }
 /* -------------------------------------------------------------------------------------------------------------------------------------- */
 
-
 function playerMovement() {
 
     const boardTiles = document.querySelectorAll("#game-board-container div"); // Select all game tiles
-    playerShowPossibleMoves(3,'border-blue');
+    playerShowPossibleMoves(3,'border-blue'); // No tiel was clciked yet so we need to show first highlighting 
 
     boardTiles.forEach((item) => {
-        item.addEventListener('click', () => {
+        item.addEventListener('click', (event) => {
 
-            if (playerOne.turn == true) {
+            if (playerOne.turn == true && event.target.classList.contains('border-blue')) { // Can only move to blue tiles
 
                 // nejake pocitadlo ci uz si player minul 3 policka na chodzu
                 let moveLimit = 3;
+                let playerOnePosition = document.querySelector('.player-one');
+                playerOnePosition.classList.remove('player-one');
+                boardTiles.forEach((item) => { item.classList.remove('border-blue') });
+                event.target.classList.add('player-one');
 
+               
+                playerOne.turn = false;
+                playerTwo.turn = true;
+                playerShowPossibleMoves(3,'border-red');
+            }
 
+            else if (playerTwo.turn == true && event.target.classList.contains('border-red')) {
 
-                // na konci pusti playerTwoShowPossibleMoves();
+                // nejake pocitadlo ci uz si player minul 3 policka na chodzu
+                let moveLimit = 3;
+                let playerOnePosition = document.querySelector('.player-two');
+                playerOnePosition.classList.remove('player-two');
+                boardTiles.forEach((item) => { item.classList.remove('border-red') });
+                event.target.classList.add('player-two');
+
                 
+                playerTwo.turn = false;
+                playerOne.turn = true;
+                playerShowPossibleMoves(3,'border-blue');
             }
 
-            else if (playerOne.turn == true) {
-
-                // na konci pusti playerOneShowPossibleMoves();
-            }
-
-            else { alert('Player turn error'); }
+            
         })
     });
 }
 
 playerShowPossibleMoves = (moveLimit, highlighting) => {
-    const playerOnePosition = document.querySelector('.player-one'); // Select tile with player one
-    playerOnePosition.classList.add(highlighting); // Give player one blue border for visibility
+    const playerOnePosition = document.querySelector('.player-one');
+    const playerTwoPosition = document.querySelector('.player-two'); 
 
-    let row = Number(playerOnePosition.dataset.row);
-    let column = Number(playerOnePosition.dataset.column);
+    let row;
+    let column;
+
+    if (highlighting == 'border-blue') {
+        playerOnePosition.classList.add(highlighting); // Give player one blue border for visibility
+        row = Number(playerOnePosition.dataset.row);
+        column = Number(playerOnePosition.dataset.column);
+    } else {
+        playerTwoPosition.classList.add(highlighting); // Give player one blue border for visibility
+        row = Number(playerTwoPosition.dataset.row);
+        column = Number(playerTwoPosition.dataset.column);
+    }
+
+    
+
+    
 
     for (let i = 1; i < moveLimit + 1; i++) {
 
@@ -287,55 +303,9 @@ playerShowPossibleMoves = (moveLimit, highlighting) => {
             tile.classList.add(highlighting);
         } 
     }
-
         // pravo lavo dole hore
         // len 1 funkcia pre oboch hracov, odlisuje ich len druhy parameter ,,highlighting,,
-    
-
-
-
-
 }
-
-/* ---------------------------------- */
-function playerOneMove() {
-
-    let divs = document.querySelectorAll("#game-board-container div"); // Select all game tiles
-    let playerOnePosition = document.querySelector('.player-one'); // Select tile with player one
-    playerOnePosition.classList.add('border-blue'); // Give player one blue border for visibility
-
-    for (let i = 0; i < divs.length; i++) {
-        divs[i].addEventListener('click', function P1M(event) { // Add events to all game tiles
-
-            if ((event.target.classList.length == 0) && (playerOneTurn == true)) { // If clicked tile is empty ( no class ) and its Player's one turn
-                playerOnePosition.classList.remove('border-blue');
-                playerOnePosition.classList.remove('player-one');
-                event.target.classList.add('player-one');
-                playerOnePosition = document.querySelector('.player-one');
-                playerOneTurn = false;
-                playerTwoTurn = true;
-
-                let row = Number(playerOnePosition.dataset.row);
-                let column = Number(playerOnePosition.dataset.column);
-
-
-                if (
-                    document.querySelector("[data-row='" + String(row) + "'][data-column='" + String(column + 1) + "']").classList.contains('player-two') ||
-                    document.querySelector("[data-row='" + String(row) + "'][data-column='" + String(column - 1) + "']").classList.contains('player-two') ||
-                    document.querySelector("[data-row='" + String(row + 1) + "'][data-column='" + String(column) + "']").classList.contains('player-two') ||
-                    document.querySelector("[data-row='" + String(row - 1) + "'][data-column='" + String(column) + "']").classList.contains('player-two')
-                )
-
-                {
-                    switchToCombat();
-                } else {
-                    playerTwoMove();
-                }
-            }
-        });
-    }
-}
-
 
 /* -------------------------------------------------------------------------------------------------------------------------------------- */
 
