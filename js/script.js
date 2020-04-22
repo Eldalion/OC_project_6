@@ -245,16 +245,54 @@ playerShowPossibleMoves = (moveLimit, highlighting) => {
     let column = Number(playerOnePosition.dataset.column);
 
     for (let i = 1; i < moveLimit + 1; i++) {
-        document.querySelector("[data-row='" + String(row) + "'][data-column='" + String(column + i) + "']").classList.add(highlighting) 
-        document.querySelector("[data-row='" + String(row) + "'][data-column='" + String(column - i) + "']").classList.add(highlighting) 
-        document.querySelector("[data-row='" + String(row + i) + "'][data-column='" + String(column) + "']").classList.add(highlighting) 
-        document.querySelector("[data-row='" + String(row - i) + "'][data-column='" + String(column) + "']").classList.add(highlighting)
 
-        // rozdelit na 4 samostatne for cykly
-        // pravo lavo dole hore
-        // Ako prve osefovat chybu co odjebe cely cyklus ked skusi oznacit stvorcek za mapou
-        // len 1 funkcia pre oboch hracov, odlisuje ich len druhy parameter ,,highlighting,,
+        let tile = document.querySelector("[data-row='" + String(row) + "'][data-column='" + String(column + i) + "']");
+
+        if ( tile == null || tile.classList.contains('player-one') || tile.classList.contains('player-two') || tile.classList.contains('obstacle') ) {
+            break;
+        } else {
+            tile.classList.add(highlighting);
+        } 
     }
+
+    for (let i = 1; i < moveLimit + 1; i++) {
+
+        let tile = document.querySelector("[data-row='" + String(row) + "'][data-column='" + String(column - i) + "']");
+
+        if ( tile == null || tile.classList.contains('player-one') || tile.classList.contains('player-two') || tile.classList.contains('obstacle') ) {
+            break;
+        } else {
+            tile.classList.add(highlighting);
+        } 
+    }
+
+    for (let i = 1; i < moveLimit + 1; i++) {
+
+        let tile = document.querySelector("[data-row='" + String(row + i) + "'][data-column='" + String(column) + "']");
+
+        if ( tile == null || tile.classList.contains('player-one') || tile.classList.contains('player-two') || tile.classList.contains('obstacle') ) {
+            break;
+        } else {
+            tile.classList.add(highlighting);
+        } 
+    }
+
+    for (let i = 1; i < moveLimit + 1; i++) {
+
+        let tile = document.querySelector("[data-row='" + String(row - i) + "'][data-column='" + String(column) + "']");
+
+        if ( tile == null || tile.classList.contains('player-one') || tile.classList.contains('player-two') || tile.classList.contains('obstacle') ) {
+            break;
+        } else {
+            tile.classList.add(highlighting);
+        } 
+    }
+
+        // pravo lavo dole hore
+        // len 1 funkcia pre oboch hracov, odlisuje ich len druhy parameter ,,highlighting,,
+    
+
+
 
 
 }
