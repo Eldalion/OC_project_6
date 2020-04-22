@@ -211,7 +211,7 @@ function newGame() {
 function playerMovement() {
 
     const boardTiles = document.querySelectorAll("#game-board-container div"); // Select all game tiles
-    playerOneShowPossibleMoves();
+    playerShowPossibleMoves(3,'border-blue');
 
     boardTiles.forEach((item) => {
         item.addEventListener('click', () => {
@@ -237,32 +237,27 @@ function playerMovement() {
     });
 }
 
-playerOneShowPossibleMoves = (moveLimit = 3) => {
+playerShowPossibleMoves = (moveLimit, highlighting) => {
     const playerOnePosition = document.querySelector('.player-one'); // Select tile with player one
-    playerOnePosition.classList.add('border-blue'); // Give player one blue border for visibility
+    playerOnePosition.classList.add(highlighting); // Give player one blue border for visibility
 
     let row = Number(playerOnePosition.dataset.row);
     let column = Number(playerOnePosition.dataset.column);
 
-    for (let i = 0; i < moveLimit; i++) {
-        document.querySelector("[data-row='" + String(row) + "'][data-column='" + String(column + i) + "']").classList.toggle('border-blue') 
-        document.querySelector("[data-row='" + String(row) + "'][data-column='" + String(column - i) + "']").classList.toggle('border-blue') 
-        document.querySelector("[data-row='" + String(row + i) + "'][data-column='" + String(column) + "']").classList.toggle('border-blue') 
-        document.querySelector("[data-row='" + String(row - i) + "'][data-column='" + String(column) + "']").classList.toggle('border-blue')
+    for (let i = 1; i < moveLimit + 1; i++) {
+        document.querySelector("[data-row='" + String(row) + "'][data-column='" + String(column + i) + "']").classList.add(highlighting) 
+        document.querySelector("[data-row='" + String(row) + "'][data-column='" + String(column - i) + "']").classList.add(highlighting) 
+        document.querySelector("[data-row='" + String(row + i) + "'][data-column='" + String(column) + "']").classList.add(highlighting) 
+        document.querySelector("[data-row='" + String(row - i) + "'][data-column='" + String(column) + "']").classList.add(highlighting)
+
+        // rozdelit na 4 samostatne for cykly
+        // pravo lavo dole hore
+        // Ako prve osefovat chybu co odjebe cely cyklus ked skusi oznacit stvorcek za mapou
+        // len 1 funkcia pre oboch hracov, odlisuje ich len druhy parameter ,,highlighting,,
     }
 
-    
-
 
 }
-
-playerTwoShowPossibleMoves = () => {
-    const playerTwoPosition = document.querySelector('.player-one'); // Select tile with player one
-    playerTwoPosition.classList.add('border-red'); // Give player one blue border for visibility
-}
-
-
-
 
 /* ---------------------------------- */
 function playerOneMove() {
@@ -303,41 +298,6 @@ function playerOneMove() {
     }
 }
 
-function playerTwoMove() {
-    let divs = document.querySelectorAll("#game-board-container div");
-    let playerTwoPosition = document.querySelector('.player-two');
-    playerTwoPosition.classList.add('border-red');
-
-    for (let i = 0; i < divs.length; i++) {
-        divs[i].addEventListener('click', function P2M(event) {
-
-            if ((event.target.classList.length == 0) && (playerTwoTurn == true)) { // If clicked tile is empty, move player there
-                playerTwoPosition.classList.remove('border-red');
-                playerTwoPosition.classList.remove('player-two');
-                event.target.classList.add('player-two');
-                playerTwoPosition = document.querySelector('.player-two');
-                playerOneTurn = true;
-                playerTwoTurn = false;
-
-                let row = Number(playerTwoPosition.dataset.row);
-                let column = Number(playerTwoPosition.dataset.column);
-
-                if (
-                    document.querySelector("[data-row='" + String(row) + "'][data-column='" + String(column + 1) + "']").classList.contains('player-one') ||
-                    document.querySelector("[data-row='" + String(row) + "'][data-column='" + String(column - 1) + "']").classList.contains('player-one') ||
-                    document.querySelector("[data-row='" + String(row + 1) + "'][data-column='" + String(column) + "']").classList.contains('player-one') ||
-                    document.querySelector("[data-row='" + String(row - 1) + "'][data-column='" + String(column) + "']").classList.contains('player-one')
-                )
-
-                {
-                    switchToCombat();
-                } else {
-                    playerOneMove();
-                }
-            }
-        });
-    }
-}
 
 /* -------------------------------------------------------------------------------------------------------------------------------------- */
 
