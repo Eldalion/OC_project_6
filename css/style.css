@@ -64,15 +64,7 @@ button:hover {
     background-color: #fff;
 }
 
-.player-one {
-    background-image: url('../img/player-one.png');
-    background-size: cover;
-}
 
-.player-two {
-    background-image: url('../img/player-two.png');
-    background-size: cover;
-}
 
 .obstacle {
     background-image: url('../img/rock.png');
@@ -82,21 +74,37 @@ button:hover {
 .weapon-one {
     background-image: url('../img/weapon-one.png');
     background-size: cover;
+    /* z-index: -10; */
 }
 
 .weapon-two {
     background-image: url('../img/weapon-two.png'); 
     background-size: cover;
+    /* z-index: -10; */
 }
 
 .weapon-three {
     background-image: url('../img/weapon-three.png'); 
     background-size: cover;
+    /* z-index: -10; */
 }
 
 .weapon-four {
     background-image: url('../img/weapon-four.png'); 
-    background-size: cover;   
+    background-size: cover;  
+    /* z-index: -10;  */
+}
+
+.player-one {
+    background-image: url('../img/player-one.png');
+    background-size: cover;
+    /* z-index: 10; */
+}
+
+.player-two {
+    background-image: url('../img/player-two.png');
+    background-size: cover;
+    /* z-index: 10; */
 }
 
 .border-blue {

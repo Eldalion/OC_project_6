@@ -4,7 +4,7 @@
 1. Very rarely, player can spawn in the corner surounded by rocks. Its very very rare tho. Didnt happen once in last 100 tests.
 2. Pocitadlo na kroky playerov, zatial funguju len tak ze spravia 1 velky/maly krok a dost. Spravit aby mali az 3 male kroky, 
    nejak to doratavat nez moze ist druhy hrac
-4. Picknutie zbrane
+3. Picknutie zbrane
 
 
 */
@@ -34,17 +34,21 @@ const playerOneName = document.querySelector('.player-one-name');
 const playerTwoName = document.querySelector('.player-two-name');
 
 class Player {
-    constructor(name, health, attackPower, turn, action) {
+    constructor( name, health, attackPower, equipedWeapon, turn, action) {
         this.name = name;
         this.health = health;
         this.attackPower = attackPower;
-        this.action = action;
+        this.equipedWeapon = equipedWeapon;
         this.turn = turn;
+        this.action = action;
+        
     }
 }
 
-let playerOne = new Player('Frank', 100, 10, '', true);
-let playerTwo = new Player('Sahib', 100, 10, '', false);
+
+
+let playerOne = new Player('Frank', 100, 10, 'fists', true,'');
+let playerTwo = new Player('Sahib', 100, 10, 'fists', false,'');
 
 /* -------------------------------------------------------------------------------------------------------------------------------------- */
 function generateBoard() {
@@ -197,7 +201,7 @@ function newGame() {
 function playerMovement() {
 
     const boardTiles = document.querySelectorAll("#game-board-container div"); // Select all game tiles
-    playerShowPossibleMoves(3,'border-blue'); // No tiel was clciked yet so we need to show first highlighting 
+    playerShowPossibleMoves(3,'border-blue'); // No tile was clciked yet so we need to show very first highlighting 
 
     boardTiles.forEach((item) => {
         item.addEventListener('click', (event) => {
@@ -205,30 +209,84 @@ function playerMovement() {
             
             if (playerOne.turn == true && event.target.classList.contains('border-blue')) { // Can only move to blue tiles
 
-                playerOnePosition = document.querySelector('.player-one'); // Pozicia z predosleho kola
+                playerOnePosition = document.querySelector('.player-one'); // Position from previous round
                 playerOnePosition.classList.remove('player-one');
 
                 boardTiles.forEach((item) => { item.classList.remove('border-blue') });
                 event.target.classList.add('player-one');
 
-                let combat = false;
+                /* Checking if there is weapon on the tile, if yes pick it up and possibly drop equiped weapon */
 
-                playerOnePosition = document.querySelector('.player-one'); //Pozicia teraz kliknuta
+                if ( event.target.classList.contains('weapon-one') ) {
+                    // if player has already a weaspon, drop it
+                    if ( playerOne.equipedWeapon != 'fists') { // If you have soem weapon equiped, drop your current weapon
+                        event.target.classList.add(playerOne.equipedWeapon);
+                    }
+
+                    playerOne.equipedWeapon = 'weapon-one';
+                    playerOne.attackPower = 20;
+                    event.target.classList.remove('weapon-one');
+                    playerOneWeapon.innerHTML = 'Pistol';
+                    playerOneDamage.innerHTML = String(playerOne.attackPower); 
+                } 
+
+                else if ( event.target.classList.contains('weapon-two') ) {
+                    
+                    if ( playerOne.equipedWeapon != 'fists') {
+                        event.target.classList.add(playerOne.equipedWeapon);
+                    }
+                    
+                    playerOne.equipedWeapon = 'weapon-two';
+                    playerOne.attackPower = 30;
+                    event.target.classList.remove('weapon-two');
+                    playerOneWeapon.innerHTML = 'Mace';
+                    playerOneDamage.innerHTML = String(playerOne.attackPower); 
+                }
+
+                else if ( event.target.classList.contains('weapon-three') ) {
+                    
+                    if ( playerOne.equipedWeapon != 'fists') {
+                        event.target.classList.add(playerOne.equipedWeapon);
+                    }
+                    
+                    playerOne.equipedWeapon = 'weapon-three';
+                    playerOne.attackPower = 40;
+                    event.target.classList.remove('weapon-three');
+                    playerOneWeapon.innerHTML = 'Bazooka';
+                    playerOneDamage.innerHTML = String(playerOne.attackPower); 
+                }
+
+                else if ( event.target.classList.contains('weapon-four') ) {
+                    
+                    if ( playerOne.equipedWeapon != 'fists') {
+                        event.target.classList.add(playerOne.equipedWeapon);
+                    }
+                    
+                    playerOne.equipedWeapon = 'weapon-four';
+                    playerOne.attackPower = 50;
+                    event.target.classList.remove('weapon-four');
+                    playerOneWeapon.innerHTML = 'Nightstick';
+                    playerOneDamage.innerHTML = String(playerOne.attackPower); 
+                }
+
+                playerOnePosition = document.querySelector('.player-one'); // New position ( newly clicked )
                 let row = Number(playerOnePosition.dataset.row);
                 let column = Number(playerOnePosition.dataset.column);
-                console.log(row);
-                console.log(column);
+               
+                /* Checking if there is a player around, if yes switch to combat phase */
+
+                let combat = false; // helper variable
 
                 let right = document.querySelector("[data-row='" + String(row) + "'][data-column='" + String(column + 1) + "']");
                 let left = document.querySelector("[data-row='" + String(row) + "'][data-column='" + String(column - 1) + "']");
                 let bottom = document.querySelector("[data-row='" + String(row + 1) + "'][data-column='" + String(column) + "']");
                 let top = document.querySelector("[data-row='" + String(row - 1) + "'][data-column='" + String(column) + "']");
                 
-                if (right != null) {
+                if (right != null) { // Checking if tile exists ( if its not outside of the board )
                     if (right.classList.contains('player-two')) {
                         console.log('right prebehlo');
                         switchToCombat();
-                        combat = true;
+                        combat = true; 
                     } 
                 } 
 
@@ -270,20 +328,74 @@ function playerMovement() {
                 boardTiles.forEach((item) => { item.classList.remove('border-red') });
                 event.target.classList.add('player-two');
 
-                let combat = false;
+                /* Checking if there is weapon on the tile, if yes pick it up and possibly drop equiped weapon */
 
-                playerTwoPosition = document.querySelector('.player-two'); // Pozicia teraz kliknuta
+                if ( event.target.classList.contains('weapon-one') ) {
+                    // if player has already a weaspon, drop it
+                    if ( playerTwo.equipedWeapon != 'fists') { // If you have soem weapon equiped, drop your current weapon
+                        event.target.classList.add(playerTwo.equipedWeapon);
+                    }
+
+                    playerTwo.equipedWeapon = 'weapon-one';
+                    playerTwo.attackPower = 20;
+                    event.target.classList.remove('weapon-one');
+                    playerTwoWeapon.innerHTML = 'Pistol';
+                    playerTwoDamage.innerHTML = String(playerTwo.attackPower); 
+                } 
+
+                else if ( event.target.classList.contains('weapon-two') ) {
+                    
+                    if ( playerTwo.equipedWeapon != 'fists') {
+                        event.target.classList.add(playerTwo.equipedWeapon);
+                    }
+                    
+                    playerTwo.equipedWeapon = 'weapon-two';
+                    playerTwo.attackPower = 30;
+                    event.target.classList.remove('weapon-two');
+                    playerTwoWeapon.innerHTML = 'Mace';
+                    playerTwoDamage.innerHTML = String(playerTwo.attackPower); 
+                }
+
+                else if ( event.target.classList.contains('weapon-three') ) {
+                    
+                    if ( playerTwo.equipedWeapon != 'fists') {
+                        event.target.classList.add(playerTwo.equipedWeapon);
+                    }
+                    
+                    playerTwo.equipedWeapon = 'weapon-three';
+                    playerTwo.attackPower = 40;
+                    event.target.classList.remove('weapon-three');
+                    playerTwoWeapon.innerHTML = 'Bazooka';
+                    playerTwoDamage.innerHTML = String(playerTwo.attackPower); 
+                }
+
+                else if ( event.target.classList.contains('weapon-four') ) {
+                    
+                    if ( playerTwo.equipedWeapon != 'fists') {
+                        event.target.classList.add(playerTwo.equipedWeapon);
+                    }
+                    
+                    playerTwo.equipedWeapon = 'weapon-four';
+                    playerTwo.attackPower = 50;
+                    event.target.classList.remove('weapon-four');
+                    playerTwoWeapon.innerHTML = 'Nightstick';
+                    playerTwoDamage.innerHTML = String(playerTwo.attackPower); 
+                }
+
+                playerTwoPosition = document.querySelector('.player-two'); // New position ( newly clicked )
                 let row = Number(playerTwoPosition.dataset.row);
                 let column = Number(playerTwoPosition.dataset.column);
-                console.log('P2',row);
-                console.log('P2',column);
+
+                /* Checking if there is a player around, if yes switch to combat phase */
+
+                let combat = false; // helper variable
                 
                 let right = document.querySelector("[data-row='" + String(row) + "'][data-column='" + String(column + 1) + "']");
                 let left = document.querySelector("[data-row='" + String(row) + "'][data-column='" + String(column - 1) + "']");
                 let bottom = document.querySelector("[data-row='" + String(row + 1) + "'][data-column='" + String(column) + "']");
                 let top = document.querySelector("[data-row='" + String(row - 1) + "'][data-column='" + String(column) + "']");
                 
-                if (right != null) {
+                if (right != null) { // Checking if tile exists ( if its not outside of the board )
                     if (right.classList.contains('player-one')) {
                         switchToCombat();
                         combat = true;
