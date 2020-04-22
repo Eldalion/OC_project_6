@@ -501,12 +501,12 @@ playerShowPossibleMoves = (moveLimit, highlighting) => {
 
 function switchToCombat() {
     alert('Combat initiated !');
+
     gameBoardContainer.classList.toggle('disabled');
-
     combatContainer.classList.toggle('disabled');
-    combatContainerPlayerTwo.classList.toggle('disabled');
 
-    
+    combatContainerPlayerOne.classList.remove('disabled');
+    combatContainerPlayerTwo.classList.add('disabled');
 }
 
 function switchPlayer() {
@@ -524,6 +524,7 @@ function resolveCombat() {
 
         if (playerOne.health <= 0 || playerTwo.health <= 0) {
             messageContainer.innerHTML = 'Someone died - new game ?';
+            declareWinner();
 
         } else {
             messageContainer.innerHTML = 'Both player attacked - New round';
@@ -540,6 +541,7 @@ function resolveCombat() {
 
         if (playerOne.health <= 0 || playerTwo.health <= 0) {
             messageContainer.innerHTML = 'Someone died - new game ?';
+            declareWinner();
 
         } else {
             messageContainer.innerHTML = 'Frank attacked, Sahib defended - New round';
@@ -552,12 +554,28 @@ function resolveCombat() {
 
         if (playerOne.health <= 0 || playerTwo.health <= 0) {
             messageContainer.innerHTML = 'Someone died - new game ?';
+            declareWinner();
 
         } else {
             messageContainer.innerHTML = 'Frank defended, Sahib attacked - New round';
         }
     }
 }
+
+declareWinner = () => {
+
+    if (playerOne.health <= 0 && playerTwo.health <= 0) {
+        alert('Sahib and Frank killed each other. Its a draw.');
+    }
+
+    else if (playerOne.health <= 0) {
+        alert('Sahib won the game !');
+    }
+
+    else if (playerTwo.health <= 0) {
+        alert('Frank won the game !');
+    }
+};
 
 /* -------------------------------------------------------------------------------------------------------------------------------------- */
 
