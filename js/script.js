@@ -1,4 +1,3 @@
-
 /* 
 
 ------- TO DO -------
@@ -17,7 +16,7 @@
 
 const newGameButton = document.querySelector('#new-game');
 const gameBoardContainer = document.querySelector('#game-board-container');
-const combatContainer = document.querySelector('.combat-container'); 
+const combatContainer = document.querySelector('.combat-container');
 const combatContainerPlayerOne = document.querySelector('.combat-container-player-one');
 const combatContainerPlayerTwo = document.querySelector('.combat-container-player-two');
 const messageContainer = document.querySelector('.message-container h2');
@@ -59,14 +58,14 @@ let playerOne = new Player('Frank', 100, 10, '', true);
 let playerTwo = new Player('Sahib', 100, 10, '', false);
 
 
+
 /* -------------------------------------------------------------------------------------------------------------------------------------- */
 function generateBoard() {
     gameBoardContainer.classList.remove('disabled');
     combatContainer.classList.add('disabled');
 
     gameBoardContainer.innerHTML = ''; // Clear game tiles
-    resetPlayerStats(); // Reset player stats to default
-
+    
     for (let i = 1; i <= 10; i++) {
 
         for (let j = 1; j <= 10; j++) {
@@ -181,10 +180,10 @@ function resetPlayerStats() {
     playerOne.attackPower = 10;
     playerOne.turn = true;
 
-    playerOne.health = 100;
-    playerOne.attackPower = 10;
-    playerOne.turn = false;
-    
+    playerTwo.health = 100;
+    playerTwo.attackPower = 10;
+    playerTwo.turn = false;
+
     playerOneName.innerHTML = playerOne.name;
     playerOneHitpoints.innerHTML = playerOne.health;
     playerOneWeapon.innerHTML = "No weapon";
@@ -201,6 +200,7 @@ function resetPlayerStats() {
 function newGame() {
     generateBoard();
     addPlayersToBoard();
+    resetPlayerStats(); 
     addWeaponsToBoard();
     addObstaclesToBoard();
     playerMovement();
@@ -209,9 +209,62 @@ function newGame() {
 
 
 function playerMovement() {
-    playerOneMove();
+
+    const boardTiles = document.querySelectorAll("#game-board-container div"); // Select all game tiles
+    playerOneShowPossibleMoves();
+
+    boardTiles.forEach((item) => {
+        item.addEventListener('click', () => {
+
+            if (playerOne.turn == true) {
+
+                // nejake pocitadlo ci uz si player minul 3 policka na chodzu
+                let moveLimit = 3;
+
+
+
+                // na konci pusti playerTwoShowPossibleMoves();
+                
+            }
+
+            else if (playerOne.turn == true) {
+
+                // na konci pusti playerOneShowPossibleMoves();
+            }
+
+            else { alert('Player turn error'); }
+        })
+    });
 }
 
+playerOneShowPossibleMoves = (moveLimit = 3) => {
+    const playerOnePosition = document.querySelector('.player-one'); // Select tile with player one
+    playerOnePosition.classList.add('border-blue'); // Give player one blue border for visibility
+
+    let row = Number(playerOnePosition.dataset.row);
+    let column = Number(playerOnePosition.dataset.column);
+
+    for (let i = 0; i < moveLimit; i++) {
+        document.querySelector("[data-row='" + String(row) + "'][data-column='" + String(column + i) + "']").classList.toggle('border-blue') 
+        document.querySelector("[data-row='" + String(row) + "'][data-column='" + String(column - i) + "']").classList.toggle('border-blue') 
+        document.querySelector("[data-row='" + String(row + i) + "'][data-column='" + String(column) + "']").classList.toggle('border-blue') 
+        document.querySelector("[data-row='" + String(row - i) + "'][data-column='" + String(column) + "']").classList.toggle('border-blue')
+    }
+
+    
+
+
+}
+
+playerTwoShowPossibleMoves = () => {
+    const playerTwoPosition = document.querySelector('.player-one'); // Select tile with player one
+    playerTwoPosition.classList.add('border-red'); // Give player one blue border for visibility
+}
+
+
+
+
+/* ---------------------------------- */
 function playerOneMove() {
 
     let divs = document.querySelectorAll("#game-board-container div"); // Select all game tiles
@@ -288,7 +341,7 @@ function playerTwoMove() {
 
 /* -------------------------------------------------------------------------------------------------------------------------------------- */
 
-function switchToCombat() { 
+function switchToCombat() {
     alert('Combat initiated !');
     gameBoardContainer.classList.toggle('disabled');
 
@@ -296,50 +349,50 @@ function switchToCombat() {
     combatContainerPlayerTwo.classList.toggle('disabled');
 }
 
-function switchPlayer (){
+function switchPlayer() {
     combatContainerPlayerOne.classList.toggle('disabled');
     combatContainerPlayerTwo.classList.toggle('disabled');
 }
 
-function resolveCombat() { 
+function resolveCombat() {
 
-    if (playerOne.action == 'Attack' && playerTwo.action == 'Attack')  {
+    if (playerOne.action == 'Attack' && playerTwo.action == 'Attack') {
         playerOne.health = playerOne.health - playerTwo.attackPower;
         playerTwo.health = playerTwo.health - playerOne.attackPower;
         playerOneHitpoints.innerHTML = playerOne.health;
         playerTwoHitpoints.innerHTML = playerTwo.health;
 
-        if ( playerOne.health <= 0 || playerTwo.health <= 0) {
+        if (playerOne.health <= 0 || playerTwo.health <= 0) {
             messageContainer.innerHTML = 'Someone died - new game ?';
-            
+
         } else {
             messageContainer.innerHTML = 'Both player attacked - New round';
         }
     }
 
-    if (playerOne.action == 'Defend' && playerTwo.action == 'Defend')  {
+    if (playerOne.action == 'Defend' && playerTwo.action == 'Defend') {
         messageContainer.innerHTML = 'Both player defended, no change in HP - New round';
     }
 
-    if (playerOne.action == 'Attack' && playerTwo.action == 'Defend')  {
-        playerTwo.health = playerTwo.health - (playerOne.attackPower / 2 );
+    if (playerOne.action == 'Attack' && playerTwo.action == 'Defend') {
+        playerTwo.health = playerTwo.health - (playerOne.attackPower / 2);
         playerTwoHitpoints.innerHTML = playerTwo.health;
 
-        if ( playerOne.health <= 0 || playerTwo.health <= 0) {
+        if (playerOne.health <= 0 || playerTwo.health <= 0) {
             messageContainer.innerHTML = 'Someone died - new game ?';
-            
+
         } else {
             messageContainer.innerHTML = 'Frank attacked, Sahib defended - New round';
         }
     }
 
-    if (playerOne.action == 'Defend' && playerTwo.action == 'Attack')  {
-        playerOne.health = playerOne.health - (playerTwo.attackPower / 2 );
+    if (playerOne.action == 'Defend' && playerTwo.action == 'Attack') {
+        playerOne.health = playerOne.health - (playerTwo.attackPower / 2);
         playerOneHitpoints.innerHTML = playerOne.health;
 
-        if ( playerOne.health <= 0 || playerTwo.health <= 0) {
+        if (playerOne.health <= 0 || playerTwo.health <= 0) {
             messageContainer.innerHTML = 'Someone died - new game ?';
-            
+
         } else {
             messageContainer.innerHTML = 'Frank defended, Sahib attacked - New round';
         }
@@ -348,9 +401,7 @@ function resolveCombat() {
 
 /* -------------------------------------------------------------------------------------------------------------------------------------- */
 
-newGameButton.addEventListener('click', function () {
-    newGame();
-});
+newGameButton.addEventListener('click', () => newGame());
 
 playerOneAttackButton.addEventListener('click', () => {
 
@@ -361,7 +412,7 @@ playerOneAttackButton.addEventListener('click', () => {
 playerOneDefendbButton.addEventListener('click', () => {
     playerOne.action = 'Defend';
     switchPlayer();
-    
+
 });
 
 playerTwoAttackButton.addEventListener('click', () => {
@@ -374,7 +425,7 @@ playerTwoAttackButton.addEventListener('click', () => {
 });
 
 playerTwoDefendbButton.addEventListener('click', () => {
-    
+
     playerTwo.action = 'Defend';
 
     resolveCombat();
