@@ -1,14 +1,12 @@
 /* ------- TO DO -------
 
-1. Mame 2 indikatory na playerturn. playerOneTurn a playerOne.turn = true; Vyjebat premennu a vsade dat len objekt
-2. Prerobit debilne pole co generuje eventlistenery pre oboch hracov zvlast. Spravit 1 eventlistener robustny pre oboch hracov
-3. Combat feature urobit. 
-    - Player 1 okno active, Player2 okno disabled, Combat log cisty
-    -
-    - Player1 vyberie akciu, player1 okno disabled, player2 okno enabled
-    - Player2 vyberie akciu, player2 okno disabled, player1 okno enabled
-    - Combat log message - ak niekoho HP je na 0, vypis vytaza, inac vypis kdo komu kolko zajebal a aku akciu si zvolil
-4. Very rarely, player can spawn in the corner surounded by rocks. Its very very rare tho. Didnt happen once in last 100 tests.
+
+1. Very rarely, player can spawn in the corner surounded by rocks. Its very very rare tho. Didnt happen once in last 100 tests.
+2. Pocitadlo na kroky playerov, zatial funguju len tak ze spravia 1 velky/maly krok a dost. Spravit aby mali az 3 male kroky, 
+   nejak to doratavat nez moze ist druhy hrac
+4. Picknutie zbrane
+
+
 */
 
 const newGameButton = document.querySelector('#new-game');
@@ -204,44 +202,128 @@ function playerMovement() {
     boardTiles.forEach((item) => {
         item.addEventListener('click', (event) => {
 
+            
             if (playerOne.turn == true && event.target.classList.contains('border-blue')) { // Can only move to blue tiles
 
-                // nejake pocitadlo ci uz si player minul 3 policka na chodzu
-                let moveLimit = 3;
-                let playerOnePosition = document.querySelector('.player-one');
+                playerOnePosition = document.querySelector('.player-one'); // Pozicia z predosleho kola
                 playerOnePosition.classList.remove('player-one');
+
                 boardTiles.forEach((item) => { item.classList.remove('border-blue') });
                 event.target.classList.add('player-one');
 
-               
-                playerOne.turn = false;
-                playerTwo.turn = true;
-                playerShowPossibleMoves(3,'border-red');
+                let combat = false;
+
+                playerOnePosition = document.querySelector('.player-one'); //Pozicia teraz kliknuta
+                let row = Number(playerOnePosition.dataset.row);
+                let column = Number(playerOnePosition.dataset.column);
+                console.log(row);
+                console.log(column);
+
+                let right = document.querySelector("[data-row='" + String(row) + "'][data-column='" + String(column + 1) + "']");
+                let left = document.querySelector("[data-row='" + String(row) + "'][data-column='" + String(column - 1) + "']");
+                let bottom = document.querySelector("[data-row='" + String(row + 1) + "'][data-column='" + String(column) + "']");
+                let top = document.querySelector("[data-row='" + String(row - 1) + "'][data-column='" + String(column) + "']");
+                
+                if (right != null) {
+                    if (right.classList.contains('player-two')) {
+                        console.log('right prebehlo');
+                        switchToCombat();
+                        combat = true;
+                    } 
+                } 
+
+                if (left != null) {
+                    if (left.classList.contains('player-two')) {
+                        switchToCombat();
+                        combat = true;
+                    } 
+                }
+
+                if (bottom != null) {
+                    if (bottom.classList.contains('player-two')) {
+                        switchToCombat();
+                        combat = true;
+                    } 
+                }
+
+                if (top != null) {
+                    if (top.classList.contains('player-two')) {
+                        switchToCombat();
+                        combat = true;
+                    } 
+                } 
+
+                if (combat == false) {
+                    playerOne.turn = false;
+                    playerTwo.turn = true;
+                    playerShowPossibleMoves(3,'border-red');
+                }
+
+                
             }
 
             else if (playerTwo.turn == true && event.target.classList.contains('border-red')) {
 
-                // nejake pocitadlo ci uz si player minul 3 policka na chodzu
-                let moveLimit = 3;
-                let playerOnePosition = document.querySelector('.player-two');
-                playerOnePosition.classList.remove('player-two');
+                playerTwoPosition = document.querySelector('.player-two'); // Pozicia z predosleho kola
+                playerTwoPosition.classList.remove('player-two');
+
                 boardTiles.forEach((item) => { item.classList.remove('border-red') });
                 event.target.classList.add('player-two');
 
-                
-                playerTwo.turn = false;
-                playerOne.turn = true;
-                playerShowPossibleMoves(3,'border-blue');
-            }
+                let combat = false;
 
-            
+                playerTwoPosition = document.querySelector('.player-two'); // Pozicia teraz kliknuta
+                let row = Number(playerTwoPosition.dataset.row);
+                let column = Number(playerTwoPosition.dataset.column);
+                console.log('P2',row);
+                console.log('P2',column);
+                
+                let right = document.querySelector("[data-row='" + String(row) + "'][data-column='" + String(column + 1) + "']");
+                let left = document.querySelector("[data-row='" + String(row) + "'][data-column='" + String(column - 1) + "']");
+                let bottom = document.querySelector("[data-row='" + String(row + 1) + "'][data-column='" + String(column) + "']");
+                let top = document.querySelector("[data-row='" + String(row - 1) + "'][data-column='" + String(column) + "']");
+                
+                if (right != null) {
+                    if (right.classList.contains('player-one')) {
+                        switchToCombat();
+                        combat = true;
+                    } 
+                } 
+
+                if (left != null) {
+                    if (left.classList.contains('player-one')) {
+                        switchToCombat();
+                        combat = true;
+                    } 
+                }
+
+                if (bottom != null) {
+                    if (bottom.classList.contains('player-one')) {
+                        switchToCombat();
+                        combat = true;
+                    } 
+                }
+
+                if (top != null) {
+                    if (top.classList.contains('player-one')) {
+                        switchToCombat();
+                        combat = true;
+                    } 
+                } 
+
+                if (combat == false) { // Aby neostali vyznacene policka  ked zacne combat
+                    playerOne.turn = true;
+                    playerTwo.turn = false;
+                    playerShowPossibleMoves(3,'border-blue');
+                }
+            }
         })
     });
 }
 
 playerShowPossibleMoves = (moveLimit, highlighting) => {
-    const playerOnePosition = document.querySelector('.player-one');
-    const playerTwoPosition = document.querySelector('.player-two'); 
+    let playerOnePosition = document.querySelector('.player-one');
+    let playerTwoPosition = document.querySelector('.player-two'); 
 
     let row;
     let column;
@@ -255,10 +337,6 @@ playerShowPossibleMoves = (moveLimit, highlighting) => {
         row = Number(playerTwoPosition.dataset.row);
         column = Number(playerTwoPosition.dataset.column);
     }
-
-    
-
-    
 
     for (let i = 1; i < moveLimit + 1; i++) {
 
@@ -315,6 +393,8 @@ function switchToCombat() {
 
     combatContainer.classList.toggle('disabled');
     combatContainerPlayerTwo.classList.toggle('disabled');
+
+    
 }
 
 function switchPlayer() {
